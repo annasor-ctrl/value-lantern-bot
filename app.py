@@ -111,11 +111,36 @@ with tab3:
     st.write(t["ex3_desc"])
     handle_text = st.text_area(t["ex3_label"], placeholder=t["ex3_placeholder"], height=100)
 
-# Tab 4: AI Analysis
+# --- 4. AI Analysis ---
 with tab4:
     st.subheader(t["ex4_title"])
     st.write(t["ex4_desc"])
     
-   if st.button(t["btn_analyze"], type="primary"):
+    if st.button(t["btn_analyze"], type="primary"):
         if not selected_values or not glass_text or not handle_text:
             st.warning("Please fill out all exercises (Tabs 1, 2, and 3) before asking the AI! / AIに尋ねる前に、すべてのエクササイズ（タブ1、2、3）を入力してください！")
+        else:
+            with st.spinner(t["loading"]):
+                try:
+                    gemini_key = st.secrets["GEMINI_API_KEY"]
+                    genai.configure(api_key=gemini_key)
+                    
+                    model = genai.GenerativeModel(
+                        model_name="gemini-2.5-flash",
+                        system_instruction=t["system_prompt"]
+                    )
+                    
+                    user_message = f"""
+                    - The Flame (Values): {', '.join(selected_values)}
+                    - The Glass (Protection): {glass_text}
+                    - The Handle (Red Flags): {handle_text}
+                    """
+                    
+                    response = model.generate_content(user_message)
+                    
+                    st.balloons()
+                    st.success("Your Personal Roadmap / あなただけのロードマップ")
+                    st.markdown(response.text)
+                    
+                except Exception as e:
+                    st.error(f"Error: {e}. Please make sure your GEMINI_API_KEY is configured properly in Streamlit.")
