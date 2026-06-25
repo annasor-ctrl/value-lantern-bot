@@ -116,5 +116,6 @@ with tab4:
     st.subheader(t["ex4_title"])
     st.write(t["ex4_desc"])
     
-    if st.button(t["btn_analyze"], type="primary"):
-        if not selected_values or not glass_text or
+   if st.button(t["btn_analyze"], type="primary"):
+        if not selected_values or not glass_text or not handle_text:
+            st.warning("Please fill out all exercises (Tabs 1, 2, and 3) before asking the AI! / AIに尋ねる前に、すべてのエクササイズ（タブ1、2、3）を入力してください！")
